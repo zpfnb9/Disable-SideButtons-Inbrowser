@@ -1,0 +1,29 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with the system csc.exe
+        shell: cmd
+        run: build.cmd
+
+      - name: Check outputs
+        shell: cmd
+        run: |
+          dir dist
+          if not exist dist\EdgeSideGuard.exe exit /b 1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EdgeSideGuard
+          path: |
+            dist/EdgeSideGuard.exe
+            dist/XButtonHarness.exe
