@@ -5,7 +5,7 @@
 
 **在 Microsoft Edge 里关掉鼠标侧键的「前进 / 后退」，专治误触导致的网页丢失。**
 
-只作用于 Edge，Office、游戏、资源管理器里的侧键照常可用。单文件、约 9 KB、零依赖、无需管理员权限、不装驱动、不联网、不显示托盘图标。
+只作用于 Edge，Office、游戏、资源管理器里的侧键照常可用。单文件、约 11 KB、零依赖、无需管理员权限、不装驱动、不联网、不显示托盘图标。
 
 ```
 误触鼠标侧键  ──▶  Windows 输入队列  ──▶  Edge 收到 WM_XBUTTONUP  ──▶  页面后退  💥
@@ -85,10 +85,10 @@ powershell -ExecutionPolicy Bypass -File .\uninstall.ps1
 ```text
 EdgeSideGuard.exe [--only <a,b>] [--log <path>] [--nolog] [--version] [--help]
 
-  --only <a,b>   要屏蔽的进程名，逗号分隔，默认 msedge
-  --log <path>   把拦截记录写到指定文件
-  --nolog        不写日志
-  --version      显示版本
+  --only <a,b>     target process names, comma separated (default: msedge)
+  --log <path>     write interception log to a specific file
+  --nolog          do not write a log file
+  --version        print version
 ```
 
 ## 验证它真的在工作
@@ -129,7 +129,7 @@ blocked msg=0x020C reason=foreground
 build.cmd
 ```
 
-产物在 `dist\`：`EdgeSideGuard.exe`（约 9 KB）和 `XButtonHarness.exe`。
+产物在 `dist\`：`EdgeSideGuard.exe`（约 11 KB）和 `XButtonHarness.exe`。
 
 ## 排查
 
@@ -166,4 +166,4 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1   # installs to %LOCALAPP
 powershell -ExecutionPolicy Bypass -File .\uninstall.ps1 # removes everything
 ```
 
-No admin rights, no drivers, no network access, ~9 KB, single process, no tray icon. Other applications keep their side buttons. MIT licensed.
+No admin rights, no drivers, no network access, ~11 KB, single process, no tray icon. Other applications keep their side buttons. MIT licensed.
