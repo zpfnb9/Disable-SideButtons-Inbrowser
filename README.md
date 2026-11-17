@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-lightgrey.svg)](#)
-[![Size](https://img.shields.io/badge/size-11%20KB-brightgreen.svg)](#)
+[![Size](https://img.shields.io/badge/size-12%20KB-brightgreen.svg)](#)
 
 **中文** · [English](#english)
 
@@ -13,7 +13,7 @@
 > Half-filled forms and long documents survive an accidental brush against the side buttons.
 
 只对你指定的浏览器生效，Office、游戏、资源管理器里的侧键照常可用。
-Windows 10/11 · 单文件 11 KB · 免安装免驱动 · 无需管理员权限 · 不联网 · 无托盘图标
+Windows 10/11 · 单文件 12 KB · 免安装免驱动 · 无需管理员权限 · 不联网 · 无托盘图标
 
 **快速开始** → [下载 exe](https://github.com/zpfnb9/Disable-SideGestures/releases) · [30 秒安装](#安装) · [它解决什么问题](#它解决什么问题)
 
@@ -325,4 +325,4 @@ Log: `%LOCALAPPDATA%\DisableSideGestures\guard.log`
 
 [MIT](LICENSE)
 
-No admin rights, no drivers, no network access, ~11 KB, one process, no tray icon. Other applications keep their side buttons.
+No admin rights, no drivers, no network access, ~12 KB, one process, no tray icon. Other applications keep their side buttons.
