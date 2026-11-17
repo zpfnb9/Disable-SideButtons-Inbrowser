@@ -5,7 +5,7 @@
 
 **在 Microsoft Edge 里关掉鼠标侧键的「前进 / 后退」，专治误触导致的网页丢失。**
 
-只作用于 Edge，Office、游戏、资源管理器里的侧键照常可用。单文件、约 11 KB、零依赖、无需管理员权限、不装驱动、不联网、不显示托盘图标。
+只作用于你指定的浏览器（默认 Edge，可加 `--only msedge,chrome` 同时管 Chrome），Office、游戏、资源管理器里的侧键照常可用。单文件、约 11 KB、零依赖、无需管理员权限、不装驱动、不联网、不显示托盘图标。
 
 ```
 误触鼠标侧键  ──▶  Windows 输入队列  ──▶  Edge 收到 WM_XBUTTONUP  ──▶  页面后退  💥
@@ -48,6 +48,34 @@ EdgeSideGuard 走的是另一条路：**在系统把侧键事件交给 Edge 之�
 - 进程名做了缓存，钩子回调里不做重活，不会拖慢鼠标。
 - 日志默认写到 `%LOCALAPPDATA%\EdgeSideGuard\guard.log`，超过 512 KB 自动轮转。
 
+## 支持 Chrome 以及其他 Chromium 浏览器
+
+拦截依据是**进程名**，与浏览器品牌无关：Edge、Chrome、Brave、Vivaldi、Opera 都是 Chromium 内核，侧键走的是同一个 `XBUTTON` 事件，换个目标名就能生效。
+
+```powershell
+# 安装时指定：Edge + Chrome
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Targets msedge,chrome
+
+# 或者直接给 exe 传参
+.\EdgeSideGuard.exe --only msedge,chrome
+
+# 只针对 Chrome
+.\EdgeSideGuard.exe --only chrome
+```
+
+常用的进程名：
+
+| 浏览器 | 进程名 |
+|---|---|
+| Microsoft Edge | `msedge` |
+| Google Chrome | `chrome` |
+| Brave | `brave` |
+| Vivaldi | `vivaldi` |
+| Opera | `opera` |
+| Chromium | `chromium` |
+
+默认只屏蔽 `msedge`。默认值刻意不扩大范围 —— 工具应该只做你要求的那一件事。
+
 ## 安装
 
 需要 Windows 10/11 和 .NET Framework 4.x（系统自带）。
@@ -58,7 +86,8 @@ EdgeSideGuard 走的是另一条路：**在系统把侧键事件交给 Edge 之�
 git clone https://github.com/zpfnb9/EdgeSideGuard.git
 cd EdgeSideGuard
 .\build.cmd
-powershell -ExecutionPolicy Bypass -File .\install.ps1
+powershell -ExecutionPolicy Bypass -File .\install.ps1                      # 只屏蔽 Edge
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Targets msedge,chrome  # Edge + Chrome
 ```
 
 `install.ps1` 会把程序复制到 `%LOCALAPPDATA%\EdgeSideGuard\`，在「启动」文件夹里创建快捷方式，并立刻启动它。**不需要管理员权限。**
@@ -112,7 +141,7 @@ copy dist\XButtonHarness.exe dist\msedge.exe
 `guard.log` 里应出现：
 
 ```text
-started v1.0.0 targets=msedge
+started v1.1.0 targets=msedge
 blocked msg=0x020B reason=foreground
 blocked msg=0x020C reason=foreground
 ```
@@ -158,12 +187,12 @@ build.cmd
 
 **Disables the mouse side buttons (Back / Forward) in Microsoft Edge only.**
 
-Edge (and Chromium) has no built-in switch for this, and policy/registry/extension workarounds do not exist. EdgeSideGuard installs a `WH_MOUSE_LL` low-level mouse hook and swallows `XBUTTON1` / `XBUTTON2` events before Edge sees them. It matches the target process by name (default `msedge`) using two rules: the target owns the foreground window, **or** the target's top-level window is under the cursor (so a background/second-monitor Edge window is covered too).
+Edge (and Chromium) has no built-in switch for this, and policy/registry/extension workarounds do not exist. EdgeSideGuard installs a `WH_MOUSE_LL` low-level mouse hook and swallows `XBUTTON1` / `XBUTTON2` events before the target browser sees them. It matches the target process by name (default `msedge`; add `chrome`, `brave`, `vivaldi` … via `--only`) using two rules: the target owns the foreground window, **or** the target's top-level window is under the cursor (so a background/second-monitor window is covered too).
 
 ```powershell
 .\build.cmd
-powershell -ExecutionPolicy Bypass -File .\install.ps1   # installs to %LOCALAPPDATA%, adds a Startup shortcut
-powershell -ExecutionPolicy Bypass -File .\uninstall.ps1 # removes everything
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Targets msedge,chrome   # default: msedge
+powershell -ExecutionPolicy Bypass -File .\uninstall.ps1                        # removes everything
 ```
 
 No admin rights, no drivers, no network access, ~11 KB, single process, no tray icon. Other applications keep their side buttons. MIT licensed.

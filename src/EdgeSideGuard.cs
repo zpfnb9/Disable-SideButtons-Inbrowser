@@ -19,14 +19,14 @@ using System.Threading;
 [assembly: AssemblyTitle("EdgeSideGuard")]
 [assembly: AssemblyDescription("Disables mouse side-button Back/Forward in Microsoft Edge only")]
 [assembly: AssemblyProduct("EdgeSideGuard")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 
 namespace EdgeSideGuard
 {
     internal static class Program
     {
-        private const string Version = "1.0.0";
+        private const string Version = "1.1.0";
 
         // Win32 常量
         private const int WH_MOUSE_LL = 14;
@@ -109,17 +109,26 @@ namespace EdgeSideGuard
         private static LowLevelMouseProc _proc;      // 必须用字段保住委托，否则会被 GC 回收
         private static IntPtr _hook = IntPtr.Zero;
         private static StreamWriter _log;
+        private static bool _debug;
 
         [STAThread]
         private static int Main(string[] args)
         {
+            // 先解析参数：--version / --help 不需要占用单实例，也不该被已在运行的实例挡住
+            if (!ParseArgs(args)) return 0;
+            if (Targets.Count == 0) Targets.Add("msedge");
+
             bool isNewInstance;
             using (Mutex mutex = new Mutex(true, "EdgeSideGuard.SingleInstance.v1", out isNewInstance))
             {
-                if (!isNewInstance) return ERROR_ALREADY_RUNNING;
-
-                if (!ParseArgs(args)) return 0;
-                if (Targets.Count == 0) Targets.Add("msedge");
+                if (!isNewInstance)
+                {
+                    lock (LogLock)
+                    {
+                        if (_log != null) { _log.Dispose(); _log = null; }
+                    }
+                    return ERROR_ALREADY_RUNNING;
+                }
 
                 try
                 {
@@ -179,6 +188,14 @@ namespace EdgeSideGuard
                     {
                         Log("blocked msg=0x" + id.ToString("X4") + " reason=under-cursor");
                         return (IntPtr)1;
+                    }
+
+                    if (_debug)
+                    {
+                        Log("debug event msg=0x" + id.ToString("X4")
+                            + " fg=[" + ProcessNameForWindow(GetForegroundWindow()) + "]"
+                            + " under=[" + ProcessNameForWindow(under) + "]"
+                            + " -> pass");
                     }
                 }
             }
@@ -242,6 +259,10 @@ namespace EdgeSideGuard
                 {
                     noLog = true;
                 }
+                else if (a == "--debug")
+                {
+                    _debug = true;
+                }
                 else if (a == "--version" || a == "-v")
                 {
                     AttachParentConsole();
@@ -258,6 +279,7 @@ namespace EdgeSideGuard
                     Console.WriteLine("  --only <a,b>     target process names, comma separated (default: msedge)");
                     Console.WriteLine("  --log <path>     write interception log to a specific file");
                     Console.WriteLine("  --nolog          do not write a log file");
+                    Console.WriteLine("  --debug          log every side-button event with the resolved names");
                     Console.WriteLine("  --version        print version");
                     return false;
                 }

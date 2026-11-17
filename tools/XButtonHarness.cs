@@ -131,6 +131,14 @@ namespace XButtonHarness
             {
                 return Click(args[1]);
             }
+            if (args.Length >= 1 && args[0] == "sendraw")
+            {
+                int btn = args.Length > 1 ? int.Parse(args[1]) : 1;
+                Console.WriteLine(DescribeWindowAtCursor());
+                Console.WriteLine("fg=" + DescribeForeground());
+                SendOnce(btn);
+                return 0;
+            }
             if (args.Length >= 1 && args[0] == "probe")
             {
                 string part = args.Length > 1 ? args[1] : null;
