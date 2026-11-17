@@ -1,14 +1,15 @@
-# 完全卸载 EdgeSideGuard：结束进程、删除开机自启、删除文件。
+# Removes DisableSideGestures completely: stops the process, deletes the
+# autostart shortcut and the installation folder.
 $ErrorActionPreference = 'SilentlyContinue'
 
-$dst = Join-Path $env:LOCALAPPDATA 'EdgeSideGuard'
+$dst = Join-Path $env:LOCALAPPDATA 'DisableSideGestures'
 $startup = [Environment]::GetFolderPath('Startup')
-$lnk = Join-Path $startup 'EdgeSideGuard.lnk'
+$lnk = Join-Path $startup 'DisableSideGestures.lnk'
 
-Get-Process EdgeSideGuard | Stop-Process -Force
+Get-Process DisableSideGestures | Stop-Process -Force
 Start-Sleep -Milliseconds 400
 
 if (Test-Path $lnk) { Remove-Item $lnk -Force }
 if (Test-Path $dst) { Remove-Item $dst -Recurse -Force }
 
-Write-Host "已卸载。鼠标侧键立即恢复原来的前进/后退行为。"
+Write-Host "Uninstalled. Mouse side buttons work as before again."

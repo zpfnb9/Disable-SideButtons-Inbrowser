@@ -1,11 +1,11 @@
-// EdgeSideGuard - 在 Microsoft Edge 中屏蔽鼠标侧键（前进 / 后退）
+// DisableSideGestures - 在浏览器里屏蔽鼠标侧键（前进 / 后退）
 //
 // 原理：安装一个 WH_MOUSE_LL 低级鼠标钩子，在系统把 XBUTTON1/XBUTTON2
-// 事件投递给 Edge 之前直接吞掉。两道判定，覆盖两种误触场景：
-//   1) Edge 拥有前台窗口                      -> reason=foreground
-//   2) Edge 在后台，但鼠标正悬停在它的窗口上    -> reason=under-cursor
+// 事件投递给目标浏览器之前直接吞掉。两道判定，覆盖两种误触场景：
+//   1) 目标浏览器拥有前台窗口                    -> reason=foreground
+//   2) 目标在后台，但鼠标正悬停在它的窗口上       -> reason=under-cursor
 //
-// 只匹配目标进程名（默认 msedge），其他任何程序完全不受影响。
+// 只匹配目标进程名（默认 msedge，可用 --only 指定 chrome 等），其他程序完全不受影响。
 //
 // MIT License
 using System;
@@ -16,17 +16,17 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-[assembly: AssemblyTitle("EdgeSideGuard")]
-[assembly: AssemblyDescription("Disables mouse side-button Back/Forward in Microsoft Edge only")]
-[assembly: AssemblyProduct("EdgeSideGuard")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyTitle("DisableSideGestures")]
+[assembly: AssemblyDescription("Disables mouse side-button Back/Forward in Edge, Chrome and other Chromium browsers")]
+[assembly: AssemblyProduct("DisableSideGestures")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 
-namespace EdgeSideGuard
+namespace DisableSideGestures
 {
     internal static class Program
     {
-        private const string Version = "1.1.0";
+        private const string Version = "2.0.0";
 
         // Win32 常量
         private const int WH_MOUSE_LL = 14;
@@ -119,7 +119,7 @@ namespace EdgeSideGuard
             if (Targets.Count == 0) Targets.Add("msedge");
 
             bool isNewInstance;
-            using (Mutex mutex = new Mutex(true, "EdgeSideGuard.SingleInstance.v1", out isNewInstance))
+            using (Mutex mutex = new Mutex(true, "DisableSideGestures.SingleInstance.v1", out isNewInstance))
             {
                 if (!isNewInstance)
                 {
@@ -266,13 +266,13 @@ namespace EdgeSideGuard
                 else if (a == "--version" || a == "-v")
                 {
                     AttachParentConsole();
-                    Console.WriteLine("EdgeSideGuard " + Version);
+                    Console.WriteLine("DisableSideGestures " + Version);
                     return false;
                 }
                 else if (a == "--help" || a == "-h" || a == "/?")
                 {
                     AttachParentConsole();
-                    Console.WriteLine("EdgeSideGuard " + Version);
+                    Console.WriteLine("DisableSideGestures " + Version);
                     Console.WriteLine("  Swallows mouse side buttons (Back/Forward) in the target application.");
                     Console.WriteLine("  Default target: msedge. Other applications are not affected.");
                     Console.WriteLine();
@@ -291,7 +291,7 @@ namespace EdgeSideGuard
                 {
                     string dir = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "EdgeSideGuard");
+                        "DisableSideGestures");
                     OpenLog(Path.Combine(dir, "guard.log"));
                 }
                 catch { }

@@ -19,11 +19,11 @@ jobs:
         shell: cmd
         run: |
           dir dist
-          if not exist dist\EdgeSideGuard.exe exit /b 1
+          if not exist dist\DisableSideGestures.exe exit /b 1
 
       - uses: actions/upload-artifact@v4
         with:
-          name: EdgeSideGuard
+          name: DisableSideGestures
           path: |
-            dist/EdgeSideGuard.exe
+            dist/DisableSideGestures.exe
             dist/XButtonHarness.exe

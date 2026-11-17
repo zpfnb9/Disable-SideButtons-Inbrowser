@@ -1,4 +1,4 @@
-// XButtonHarness - EdgeSideGuard 的测试工具
+// XButtonHarness - DisableSideGestures 的测试工具
 //
 // 它本身不是产品的一部分，只在仓库里用来验证拦截器是否生效。两种用途：
 //   recv   打开一个测试窗口，把收到的 XBUTTON 事件写进日志（用来证明“事件确实到达了窗口”）

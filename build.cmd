@@ -11,8 +11,8 @@ if not exist "%CSC%" (
 
 if not exist "%ROOT%dist" mkdir "%ROOT%dist"
 
-echo [*] Building EdgeSideGuard...
-"%CSC%" /nologo /codepage:65001 /target:winexe /optimize+ /out:"%ROOT%dist\EdgeSideGuard.exe" "%ROOT%src\EdgeSideGuard.cs"
+echo [*] Building DisableSideGestures...
+"%CSC%" /nologo /codepage:65001 /target:winexe /optimize+ /out:"%ROOT%dist\DisableSideGestures.exe" "%ROOT%src\\DisableSideGestures.cs"
 if errorlevel 1 exit /b 1
 
 echo [*] Building XButtonHarness...
@@ -20,6 +20,6 @@ echo [*] Building XButtonHarness...
 if errorlevel 1 exit /b 1
 
 echo.
-echo [ok] dist\EdgeSideGuard.exe
+echo [ok] dist\DisableSideGestures.exe
 echo [ok] dist\XButtonHarness.exe
 endlocal
